@@ -2,8 +2,10 @@
 
 Engine uses imperial measurement system
 
-Screen ratio = 1px:1ft
-g = 32.185 ft/s
+
+### Constants
+- Screen Ratio = 1px:1ft
+- g = 32.185 ft/s
 
 ---
 
