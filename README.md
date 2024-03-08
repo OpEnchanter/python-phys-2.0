@@ -25,20 +25,20 @@ phys_obj2 = main.object([55, 0], "square", 50, window)
 
 while running:
 
-        # Check for window close event
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    # Check for window close event
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-        # Fill the window
-        window.fill((255, 255, 255))
+    # Fill the window
+    window.fill((255, 255, 255))
 
-        phys_obj.frame()
-        phys_obj2.frame()
-        
+    phys_obj.frame()
+    phys_obj2.frame()
+    
 
-        # Apply changes to the window
-        pygame.display.flip()
+    # Apply changes to the window
+    pygame.display.flip()
 
 pygame.quit()
 ```
