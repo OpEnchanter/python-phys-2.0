@@ -2,31 +2,65 @@ import pygame, time
 
 
 class object():
-    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display):
-        self.position = [start_position[0] + 250, -start_position[1] + 250]
+    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = int):
+        # Physics Variables
+
+        self.position = [start_position[0], start_position[1]]
         self.velocity = [0,0]
-        self.elapsed_frames = 0
-        self.object_type = object_type
-        self.window = window
+
+
+        # Physics Constants
+
+        self.g = 315.09
         self.scale = object_scale
+        self.density = density
+        self.volume = 0
+
+        if object_type == "circle":
+            self.volume = ((self.scale**2) * 3.14)
+        elif object_type == "square":
+            self.volume = self.scale**2
+
+        self.mass = self.density * self.volume
+
+        print(self.mass)
+
+
+        # Simulation Variables
+
+        self.object_type = object_type
+        self.elapsed_frames = 0
+        self.window = window
         self.timing = time.time()
         self.frametiming = 0
+        self.fps = 60
+        
 
-    def frame(self, show_frame_elapsed = bool):
+    def frame(self, show_fps = bool):
         
         
         # Draw the object to the screen
         if self.object_type == "circle":
-            pygame.draw.circle(self.window, (0, 0, 0), (self.position[0], self.position[1]), self.scale/2)
+            pygame.draw.circle(self.window, (0, 0, 0), [self.position[0], (500-self.position[1])], self.scale)
         elif self.object_type == "square":
-            pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2, self.position[1] - self.scale/2, self.scale, self.scale))
+            pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
 
         # Calculate Frame Physics
-        
-        if time.time()-self.timing >= 1:
+        self.velocity[1] -= self.g/self.fps
+
+        self.position[0] += self.velocity[0]
+        self.position[1] += self.velocity[1]
+
+        if self.position[1] <= 0 + self.scale/2:
+            self.position[1] = 0+self.scale/2
+
+        # Calulate Simulation fps
+        if time.time()-self.timing >= 0.75:
             self.timing = time.time()
-            print(self.timing/self.frametiming)
+            self.fps = self.timing/self.frametiming
+            if (show_fps):
+                print(self.fps)
             self.frametiming=0
 
         self.elapsed_frames += 1
-        self.frametiming += 1
+        self.frametiming += 0
