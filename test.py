@@ -5,7 +5,7 @@ running = True
 
 print(window)
 
-phys_obj = main.object([100, 250], "square", 50, window, 1)
+phys_obj = main.object([100, 250], "square", 50, window, 0.001)
 phys_obj2 = main.object([-100, 250], "square", 50, window, 1)
 
 while running:

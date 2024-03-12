@@ -23,8 +23,6 @@ class object():
 
         self.mass = self.density * self.volume
 
-        print(self.mass)
-
 
         # Simulation Variables
 
@@ -33,11 +31,21 @@ class object():
         self.window = window
         self.timing = time.time()
         self.frametiming = 0
-        self.fps = 60
+        self.fps = 3000
+        checking_fps = True
+        while(checking_fps):
+            if time.time()-self.timing >= 1:
+                self.fps = int(self.frametiming/(time.time()-self.timing))
+                self.frametiming = 0
+                self.timing = time.time()
+                checking_fps=False
+            self.frametiming += 1
+        self.timing = time.time()
+        self.frametiming = 0
         
 
     def frame(self, show_fps = bool):
-        
+        self.frametiming += 1
         
         # Draw the object to the screen
         if self.object_type == "circle":
@@ -55,12 +63,14 @@ class object():
             self.position[1] = 0+self.scale/2
 
         # Calulate Simulation fps
-        if time.time()-self.timing >= 0.75:
-            self.timing = time.time()
-            self.fps = self.timing/self.frametiming
+        if time.time()-self.timing >= 1:
+            print(time.time()-self.frametiming)
+            self.fps = int(self.frametiming/(time.time()-self.timing))
             if (show_fps):
                 print(self.fps)
-            self.frametiming=0
+            self.frametiming = 0
+            self.timing = time.time()
+
 
         self.elapsed_frames += 1
-        self.frametiming += 0
+        time.sleep(0.1)
