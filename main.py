@@ -1,8 +1,20 @@
 import pygame, time
 
+def calc_fps():
+    frametiming = 0
+    timing = time.time()
+    checking_fps = True
+    while(checking_fps):
+        frametiming += 1
+        if time.time()-timing >= 1:
+            print(frametiming)
+            fps = int(frametiming/(time.time()-timing))
+            checking_fps=False
+            return(fps)
+
 
 class object():
-    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = int):
+    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = int, fps = int):
         # Physics Variables
 
         self.position = [start_position[0], start_position[1]]
@@ -31,17 +43,7 @@ class object():
         self.window = window
         self.timing = time.time()
         self.frametiming = 0
-        self.fps = 3000
-        checking_fps = True
-        while(checking_fps):
-            if time.time()-self.timing >= 1:
-                self.fps = int(self.frametiming/(time.time()-self.timing))
-                self.frametiming = 0
-                self.timing = time.time()
-                checking_fps=False
-            self.frametiming += 1
-        self.timing = time.time()
-        self.frametiming = 0
+        self.fps = fps
         
 
     def frame(self, show_fps = bool):
@@ -64,7 +66,6 @@ class object():
 
         # Calulate Simulation fps
         if time.time()-self.timing >= 1:
-            print(time.time()-self.frametiming)
             self.fps = int(self.frametiming/(time.time()-self.timing))
             if (show_fps):
                 print(self.fps)
@@ -73,4 +74,3 @@ class object():
 
 
         self.elapsed_frames += 1
-        time.sleep(0.1)

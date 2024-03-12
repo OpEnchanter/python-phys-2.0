@@ -5,8 +5,10 @@ running = True
 
 print(window)
 
-phys_obj = main.object([100, 250], "square", 50, window, 0.001)
-phys_obj2 = main.object([-100, 250], "square", 50, window, 1)
+fps=main.calc_fps()
+
+phys_obj = main.object([100, 250], "square", 50, window, 1, fps)
+phys_obj2 = main.object([-100, 250], "square", 50, window, 1, fps)
 
 while running:
 
