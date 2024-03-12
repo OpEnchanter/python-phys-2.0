@@ -1,4 +1,4 @@
-import pygame, time
+import pygame, time, math
 
 def calc_fps():
     frametiming = 0
@@ -44,6 +44,8 @@ class object():
         self.timing = time.time()
         self.frametiming = 0
         self.fps = fps
+
+        self.drag = 0
         
 
     def frame(self, show_fps = bool):
@@ -56,13 +58,16 @@ class object():
             pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
 
         # Calculate Frame Physics
-        self.velocity[1] -= self.g/self.fps
+        if self.position[1] <= 0 + self.scale/2:
+            self.position[1] = 0+self.scale/2
+            self.velocity[1] = 0
+        elif abs(self.velocity[1]) > 0:
+            self.drag = (abs(self.velocity[1])/self.density)/2
+            print(self.drag)
+        self.velocity[1] -= (self.g - self.drag) / self.fps
 
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
-
-        if self.position[1] <= 0 + self.scale/2:
-            self.position[1] = 0+self.scale/2
 
         # Calulate Simulation fps
         if time.time()-self.timing >= 1:

@@ -3,12 +3,10 @@ pygame.init()
 window = pygame.display.set_mode([500, 500])
 running = True
 
-print(window)
-
 fps=physics.calc_fps()
 
-phys_obj = physics.object([100, 250], "square", 50, window, 1, fps)
-phys_obj2 = physics.object([-100, 250], "square", 50, window, 1, fps)
+phys_obj = physics.object([100, 250], "square", 50, window, 2, fps)
+phys_obj2 = physics.object([-100, 250], "square", 50, window, 0.1, fps)
 
 while running:
 
