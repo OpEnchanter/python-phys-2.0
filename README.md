@@ -13,18 +13,18 @@ Engine uses imperial measurement system
 
 Example Script:
 ```
-import main, pygame
+import physics, pygame
 pygame.init()
 window = pygame.display.set_mode([500, 500])
 running = True
 
-print(window)
+fps=physics.calc_fps()
 
-phys_obj = main.object([0, 0], "square", 50, window)
-phys_obj2 = main.object([55, 0], "square", 50, window)
+phys_obj = physics.object([-100, 250], "circle", 50, window, 1, fps)
+phys_obj2 = physics.object([100, 250], "square", 50, window, 1, fps)
 
 while running:
-
+                                                                              
     # Check for window close event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -33,8 +33,8 @@ while running:
     # Fill the window
     window.fill((255, 255, 255))
 
-    phys_obj.frame()
-    phys_obj2.frame()
+    phys_obj.frame(False)
+    phys_obj2.frame(False)
     
 
     # Apply changes to the window
