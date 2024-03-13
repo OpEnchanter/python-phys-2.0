@@ -7,7 +7,6 @@ def calc_fps():
     while(checking_fps):
         frametiming += 1
         if time.time()-timing >= 1:
-            print(frametiming)
             fps = int(frametiming/(time.time()-timing))
             checking_fps=False
             return(fps)
@@ -29,11 +28,13 @@ class object():
         self.volume = 0
 
         if object_type == "circle":
-            self.volume = ((self.scale**2) * 3.14)
+            self.volume = (((self.scale/2)**2) * 3.14)
         elif object_type == "square":
             self.volume = self.scale**2
 
         self.mass = self.density * self.volume
+
+        print(self.mass)
 
 
         # Simulation Variables
@@ -53,17 +54,19 @@ class object():
         
         # Draw the object to the screen
         if self.object_type == "circle":
-            pygame.draw.circle(self.window, (0, 0, 0), [self.position[0], (500-self.position[1])], self.scale)
+            pygame.draw.circle(self.window, (0, 0, 0), [self.position[0]+250, (500-self.position[1])], self.scale/2)
         elif self.object_type == "square":
             pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
 
         # Calculate Frame Physics
-        if self.position[1] <= 0 + self.scale/2:
+        if self.position[1] <= 0 + self.scale/2 and abs(self.velocity[1]) > 0.01:
             self.position[1] = 0+self.scale/2
             self.velocity[1] = 0
+        elif self.position[1] >= 500 - self.scale/2 and abs(self.velocity[1]) > 0.01:
+            self.position[1] = 500-self.scale/2
+            self.velocity[1] = 0
         elif abs(self.velocity[1]) > 0:
-            self.drag = (abs(self.velocity[1])/self.density)/2
-            print(self.drag)
+            self.drag = self.g / (self.density*10)
         self.velocity[1] -= (self.g - self.drag) / self.fps
 
         self.position[0] += self.velocity[0]

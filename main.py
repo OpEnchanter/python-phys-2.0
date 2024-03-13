@@ -5,11 +5,11 @@ running = True
 
 fps=physics.calc_fps()
 
-phys_obj = physics.object([100, 250], "square", 50, window, 2, fps)
-phys_obj2 = physics.object([-100, 250], "square", 50, window, 0.1, fps)
+phys_obj = physics.object([-100, 250], "circle", 50, window, 1, fps)
+phys_obj2 = physics.object([100, 250], "square", 50, window, 1, fps)
 
 while running:
-
+                                                                              
     # Check for window close event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
