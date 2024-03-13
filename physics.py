@@ -1,4 +1,4 @@
-import pygame, time, math
+import pygame, time, math, sys
 
 def calc_fps():
     frametiming = 0
@@ -13,7 +13,7 @@ def calc_fps():
 
 
 class object():
-    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = int, fps = int):
+    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = float, elasticity = float, fps = int):
         # Physics Variables
 
         self.position = [start_position[0], start_position[1]]
@@ -22,10 +22,14 @@ class object():
 
         # Physics Constants
 
+        self.elasticity = elasticity
+
         self.g = 315.09
         self.scale = object_scale
         self.density = density
         self.volume = 0
+
+        self.drag = self.g / (self.density*10)
 
         if object_type == "circle":
             self.volume = (((self.scale/2)**2) * 3.14)
@@ -59,18 +63,21 @@ class object():
             pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
 
         # Calculate Frame Physics
-        if self.position[1] <= 0 + self.scale/2 and abs(self.velocity[1]) > 0.01:
-            self.position[1] = 0+self.scale/2
-            self.velocity[1] = 0
-        elif self.position[1] >= 500 - self.scale/2 and abs(self.velocity[1]) > 0.01:
-            self.position[1] = 500-self.scale/2
-            self.velocity[1] = 0
-        elif abs(self.velocity[1]) > 0:
-            self.drag = self.g / (self.density*10)
-        self.velocity[1] -= (self.g - self.drag) / self.fps
 
-        self.position[0] += self.velocity[0]
-        self.position[1] += self.velocity[1]
+        self.velocity[1] -= (self.g - self.drag)
+        if (self.position[1] <= 0 + self.scale/2 or self.position[1] >= 500 - self.scale/2):
+            self.velocity[1] = (self.velocity[1])*(-self.elasticity)
+        elif self.position[1] <= 0 + self.scale/2 and abs(self.velocity[1]) < 5:
+            self.position[1] = 0+(self.scale/2)
+        elif self.position[1] >= 500 - self.scale/2 and abs(self.velocity[1]) < 5:
+            self.position[1] = 500-(self.scale/2)
+        
+
+        self.velocity[1] -= (self.g-self.drag)
+        print(self.position)
+
+        self.position[1] += self.velocity[1] / self.fps
+        self.position[0] += self.velocity[0] / self.fps
 
         # Calulate Simulation fps
         if time.time()-self.timing >= 1:

@@ -5,8 +5,8 @@ running = True
 
 fps=physics.calc_fps()
 
-phys_obj = physics.object([-100, 250], "circle", 50, window, 1, fps)
-phys_obj2 = physics.object([100, 250], "square", 50, window, 1, fps)
+phys_obj = physics.object([0, 250], "square", 50, window, 1, 0, fps)
+#phys_obj2 = physics.object([100, 250], "square", 50, window, 1, 1, fps)
 
 while running:
                                                                               
@@ -19,7 +19,7 @@ while running:
     window.fill((255, 255, 255))
 
     phys_obj.frame(False)
-    phys_obj2.frame(False)
+   # phys_obj2.frame(False)
     
 
     # Apply changes to the window
