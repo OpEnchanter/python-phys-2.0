@@ -18,11 +18,20 @@ pygame.init()
 window = pygame.display.set_mode([500, 500])
 running = True
 
-fps=physics.calc_fps()
+fps=120
+objects = []
 
-phys_obj = physics.object([-100, 250], "circle", 50, window, 1, fps)
-phys_obj2 = physics.object([100, 250], "square", 50, window, 1, fps)
+def spawn(object_amm, offset, scale, y, type):
 
+    for x in range(object_amm):
+        objects.append(physics.object([-250+25+(scale*x)+(offset*x), y], type, scale, window, 1, fps))
+
+    print(objects)
+
+spawn(5, 5, 50, 250, "square")
+spawn(7, 5, 50, 350, "circle")
+
+clock = pygame.time.Clock()
 while running:
                                                                               
     # Check for window close event
@@ -33,12 +42,14 @@ while running:
     # Fill the window
     window.fill((255, 255, 255))
 
-    phys_obj.frame(False)
-    phys_obj2.frame(False)
-    
+    for object in objects:
+        other_obj = [obj for obj in objects if obj != object]
+        object.frame(False, other_obj)
 
     # Apply changes to the window
     pygame.display.flip()
+
+    clock.tick(fps)
 
 pygame.quit()
 ```

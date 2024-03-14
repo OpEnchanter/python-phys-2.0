@@ -4,10 +4,16 @@ window = pygame.display.set_mode([500, 500])
 running = True
 
 fps=120
+objects = []
 
-phys_obj = physics.object([0, 250], "square", 50, window, 1, fps)
-phys_obj2 = physics.object([0, 450], "square", 50, window, 1, fps)
+def spawn(object_amm, offset, scale, starting_pos, type):
 
+    for x in range(object_amm):
+        objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], type, scale, window, 1, fps))
+
+    print(objects)
+
+spawn(1, 0, 250, [-25, 750], "triangle")
 
 clock = pygame.time.Clock()
 while running:
@@ -20,8 +26,9 @@ while running:
     # Fill the window
     window.fill((255, 255, 255))
 
-    phys_obj.frame(False, [phys_obj2])
-    phys_obj2.frame(False, [phys_obj])
+    for object in objects:
+        other_obj = [obj for obj in objects if obj != object]
+        object.frame(False, other_obj)
 
     # Apply changes to the window
     pygame.display.flip()

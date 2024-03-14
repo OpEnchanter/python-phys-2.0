@@ -59,23 +59,25 @@ class object():
             pygame.draw.circle(self.window, (0, 0, 0), [self.position[0]+250, (500-self.position[1])], self.scale/2)
         elif self.object_type == "square":
             pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
+        elif self.object_type == "triangle":
+            pygame.draw.polygon(self.window, (255, 0, 0), [(250+self.position[0] - self.scale/2, 500-self.position[1]), (250+self.position[0] - self.scale/2, 500-self.position[1]), (250-self.position[0], 500-self.position[1]+self.scale/2)])
 
         # Calculate Frame Physics
 
         self.velocity[1] -= (self.g - self.drag)
         
         for object in collision_objects:
-            if self.position[1] <= (object.position[1] + object.scale/2) + self.scale/2 and self.position[1] > object.position[1]:
+            if self.position[1] <= (object.position[1] + object.scale/2) + self.scale/2 and self.position[1] > object.position[1] and self.position[0] >= object.position[0]-object.scale/2 and self.position[0] <= object.position[0] + object.scale/2:
                 self.position[1] = (object.position[1] + object.scale/2) + (self.scale/2)
                 self.velocity[1] = 0
-            elif self.position[1] >= (object.position[1] - object.scale/2) - self.scale/2 and self.position[1] < object.position[1]:
+            elif self.position[1] >= (object.position[1] - object.scale/2) - self.scale/2 and self.position[1] < object.position[1] and self.position[0] >= object.position[0]-object.scale/2 and self.position[0] <= object.position[0] + object.scale/2 and self.density < 0.1:
                 self.position[1] = (object.position[1] - object.scale/2) - (self.scale/2)
                 self.velocity[1] = 0
 
         if self.position[1] <= 0 + self.scale/2:
             self.position[1] = 0+(self.scale/2)
             self.velocity[1] = 0
-        elif self.position[1] >= 500 - self.scale/2:
+        elif self.position[1] >= 500 - self.scale/2 and self.density < 0.1:
             self.position[1] = 500-(self.scale/2)
             self.velocity[1] = 0
 
@@ -83,5 +85,6 @@ class object():
 
         self.position[1] += self.velocity[1]/self.fps
         self.position[0] += self.velocity[0]/self.fps
+        self.position[1] = math.floor(self.position[1])
 
         self.elapsed_frames += 1
