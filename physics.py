@@ -13,7 +13,7 @@ def calc_fps():
 
 
 class object():
-    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = float, elasticity = float, fps = int):
+    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = float, fps = int):
         # Physics Variables
 
         self.position = [start_position[0], start_position[1]]
@@ -22,9 +22,7 @@ class object():
 
         # Physics Constants
 
-        self.elasticity = elasticity
-
-        self.g = 315.09
+        self.g = 17.75
         self.scale = object_scale
         self.density = density
         self.volume = 0
@@ -50,10 +48,10 @@ class object():
         self.frametiming = 0
         self.fps = fps
 
-        self.drag = 0
+        self.drag = self.g/(self.density*10)
         
 
-    def frame(self, show_fps = bool):
+    def frame(self, show_fps = bool, collision_objects = list):
         self.frametiming += 1
         
         # Draw the object to the screen
@@ -65,27 +63,25 @@ class object():
         # Calculate Frame Physics
 
         self.velocity[1] -= (self.g - self.drag)
-        if (self.position[1] <= 0 + self.scale/2 or self.position[1] >= 500 - self.scale/2):
-            self.velocity[1] = (self.velocity[1])*(-self.elasticity)
-        elif self.position[1] <= 0 + self.scale/2 and abs(self.velocity[1]) < 5:
-            self.position[1] = 0+(self.scale/2)
-        elif self.position[1] >= 500 - self.scale/2 and abs(self.velocity[1]) < 5:
-            self.position[1] = 500-(self.scale/2)
         
+        for object in collision_objects:
+            if self.position[1] <= (object.position[1] + object.scale/2) + self.scale/2 and self.position[1] > object.position[1]:
+                self.position[1] = (object.position[1] + object.scale/2) + (self.scale/2)
+                self.velocity[1] = 0
+            elif self.position[1] >= (object.position[1] - object.scale/2) - self.scale/2 and self.position[1] < object.position[1]:
+                self.position[1] = (object.position[1] - object.scale/2) - (self.scale/2)
+                self.velocity[1] = 0
 
-        self.velocity[1] -= (self.g-self.drag)
-        print(self.position)
+        if self.position[1] <= 0 + self.scale/2:
+            self.position[1] = 0+(self.scale/2)
+            self.velocity[1] = 0
+        elif self.position[1] >= 500 - self.scale/2:
+            self.position[1] = 500-(self.scale/2)
+            self.velocity[1] = 0
 
-        self.position[1] += self.velocity[1] / self.fps
-        self.position[0] += self.velocity[0] / self.fps
+        self.velocity[1] -= ((self.g/self.fps)-self.drag)
 
-        # Calulate Simulation fps
-        if time.time()-self.timing >= 1:
-            self.fps = int(self.frametiming/(time.time()-self.timing))
-            if (show_fps):
-                print(self.fps)
-            self.frametiming = 0
-            self.timing = time.time()
-
+        self.position[1] += self.velocity[1]/self.fps
+        self.position[0] += self.velocity[0]/self.fps
 
         self.elapsed_frames += 1

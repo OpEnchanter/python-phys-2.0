@@ -42,3 +42,13 @@ while running:
 
 pygame.quit()
 ```
+
+FPS Code:
+```
+if time.time()-self.timing >= 0.01:
+            self.fps = int(self.frametiming/(time.time()-self.timing))
+            if (show_fps):
+                print(self.fps)
+            self.frametiming = 0
+            self.timing = time.time()
+```
