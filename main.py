@@ -1,4 +1,4 @@
-import physics, pygame
+import physics, pygame, time
 pygame.init()
 window = pygame.display.set_mode([500, 500])
 running = True
@@ -6,14 +6,15 @@ running = True
 fps=120
 objects = []
 
-def spawn(object_amm, offset, scale, starting_pos, type):
+def spawn(object_amm, offset, scale, starting_pos, starting_vel, type):
 
     for x in range(object_amm):
-        objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], type, scale, window, 1, fps))
+        objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], starting_vel,  type, scale, window, 1, fps))
 
     print(objects)
 
-spawn(1, 0, 250, [-25, 750], "triangle")
+spawn(10, 5, 25, [-250, 350], [10, 0], "square")
+spawn(10, 5, 25, [-250, 450], [0, 0], "square")
 
 clock = pygame.time.Clock()
 while running:

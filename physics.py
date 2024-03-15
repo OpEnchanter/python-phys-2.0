@@ -13,11 +13,11 @@ def calc_fps():
 
 
 class object():
-    def __init__(self, start_position = list, object_type = str, object_scale = int, window = pygame.display, density = float, fps = int):
+    def __init__(self, start_position = list, start_velocity = list, object_type = str, object_scale = int, window = pygame.display, density = float, fps = int):
         # Physics Variables
 
         self.position = [start_position[0], start_position[1]]
-        self.velocity = [0,0]
+        self.velocity = start_velocity
 
 
         # Physics Constants
@@ -33,6 +33,8 @@ class object():
             self.volume = (((self.scale/2)**2) * 3.14)
         elif object_type == "square":
             self.volume = self.scale**2
+        elif object_type == "triange":
+            self.volume = (self.scale**2)/2
 
         self.mass = self.density * self.volume
 
@@ -53,26 +55,30 @@ class object():
 
     def frame(self, show_fps = bool, collision_objects = list):
         self.frametiming += 1
-        
-        # Draw the object to the screen
-        if self.object_type == "circle":
-            pygame.draw.circle(self.window, (0, 0, 0), [self.position[0]+250, (500-self.position[1])], self.scale/2)
-        elif self.object_type == "square":
-            pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
-        elif self.object_type == "triangle":
-            pygame.draw.polygon(self.window, (255, 0, 0), [(250+self.position[0] - self.scale/2, 500-self.position[1]), (250+self.position[0] - self.scale/2, 500-self.position[1]), (250-self.position[0], 500-self.position[1]+self.scale/2)])
 
         # Calculate Frame Physics
-
         self.velocity[1] -= (self.g - self.drag)
+
+        self.position[1] += self.velocity[1]/self.fps
+        self.position[0] += self.velocity[0]/self.fps
+        self.position[1] = math.floor(self.position[1])
         
         for object in collision_objects:
+            y_collision = self.position[1] <= object.position[1] + object.scale/2 and self.position[1] >= object.position[1] - object.scale/2
             if self.position[1] <= (object.position[1] + object.scale/2) + self.scale/2 and self.position[1] > object.position[1] and self.position[0] >= object.position[0]-object.scale/2 and self.position[0] <= object.position[0] + object.scale/2:
                 self.position[1] = (object.position[1] + object.scale/2) + (self.scale/2)
                 self.velocity[1] = 0
             elif self.position[1] >= (object.position[1] - object.scale/2) - self.scale/2 and self.position[1] < object.position[1] and self.position[0] >= object.position[0]-object.scale/2 and self.position[0] <= object.position[0] + object.scale/2 and self.density < 0.1:
                 self.position[1] = (object.position[1] - object.scale/2) - (self.scale/2)
                 self.velocity[1] = 0
+            elif (self.position[0]-self.scale/2 <= object.position[0]+object.scale/2 and self.position[0]-self.scale/2 >= object.position[0]-object.scale/2 and y_collision):
+                self.position[0] = object.position[0] + object.scale/2 + self.scale/2
+                self.velocity[0] = 0
+                print("x1")
+            elif (self.position[0]+self.scale/2 >= object.position[0]-object.scale/2 and self.position[0]+self.scale/2 <= object.position[0]+object.scale/2 and y_collision):
+                self.position[0] = object.position[0] - object.scale/2 - self.scale/2
+                self.velocity[0] = 0
+                print("x2")
 
         if self.position[1] <= 0 + self.scale/2:
             self.position[1] = 0+(self.scale/2)
@@ -81,10 +87,12 @@ class object():
             self.position[1] = 500-(self.scale/2)
             self.velocity[1] = 0
 
-        self.velocity[1] -= ((self.g/self.fps)-self.drag)
-
-        self.position[1] += self.velocity[1]/self.fps
-        self.position[0] += self.velocity[0]/self.fps
-        self.position[1] = math.floor(self.position[1])
+         # Draw the object to the screen
+        if self.object_type == "circle":
+            pygame.draw.circle(self.window, (0, 0, 0), [self.position[0]+250, (500-self.position[1])], self.scale/2)
+        elif self.object_type == "square":
+            pygame.draw.rect(self.window, (0, 0, 0), (self.position[0] - self.scale/2 + 250, (500-self.position[1]) - self.scale/2, self.scale, self.scale))
+        elif self.object_type == "triangle":
+            pygame.draw.polygon(self.window, (0, 0, 0), ((250+self.position[0]-self.scale/2, 500-self.position[1]+self.scale/2), (250+self.position[0], 500-(self.position[1]+self.scale/2)), (250+(self.scale/2)+self.position[0], 500-self.position[1]+self.scale/2)))
 
         self.elapsed_frames += 1
