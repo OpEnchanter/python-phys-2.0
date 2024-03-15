@@ -6,19 +6,20 @@ running = True
 fps=120
 objects = []
 
-def spawn(object_amm, offset, scale, starting_pos, starting_vel, type):
+def spawn(object_amm, offset, scale, starting_pos, starting_vel, type, density, elasticity, roughness):
 
     for x in range(object_amm):
-        objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], starting_vel,  type, scale, window, 1, fps))
+        objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], starting_vel,  type, scale, window, density, elasticity, roughness, fps))
 
-    print(objects)
+spawn(1, 10, 25, [-100, 350], [-1000, 1000], "circle", 1, 0.57, 0.1)
 
-spawn(10, 5, 25, [-250, 350], [10, 0], "square")
-spawn(10, 5, 25, [-250, 450], [0, 0], "square")
+
+
 
 clock = pygame.time.Clock()
 while running:
-                                                                              
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+
     # Check for window close event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
