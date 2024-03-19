@@ -4,6 +4,9 @@
 
 Engine uses imperial measurement system
 
+Pygame Docs Link: https://www.pygame.org/docs/
+
+The Pygame Docs include everything about the Pygame library, so you can easily learn pygame if you know python, and update the code in this physics engine easily.
 
 ### Constants
 - Screen Ratio = 1px:1ft

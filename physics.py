@@ -13,7 +13,7 @@ def calc_fps():
 
 
 class object():
-    def __init__(self, start_position = list, start_velocity = list, object_type = str, object_scale = int, window = pygame.display, density = float, elasticity = float, roughness = float, fps = int):
+    def __init__(self, start_position = list, start_velocity = list, object_type = str, object_scale = int, window = pygame.display, density = float, elasticity = float, roughness = float, deltaTime = int, draggable = bool):
         # Physics Variables
 
         self.position = [start_position[0], start_position[1]]
@@ -46,25 +46,59 @@ class object():
 
         # Simulation Variables
 
+        self.can_pick_up = draggable
+
         self.object_type = object_type
         self.elapsed_frames = 0
         self.window = window
         self.timing = time.time()
         self.frametiming = 0
-        self.fps = fps
+        self.deltaTime = deltaTime
 
         self.drag = self.g/(self.density*10)
+
+        self.grabbing = False
+
+        self.last_frame_pos = start_position
+        self.last_frame_grabbing = False
         
 
-    def frame(self, show_fps = bool, collision_objects = list):
+    def frame(self, show_fps = bool, collision_objects = list, other_grabbed = bool):
         self.frametiming += 1
 
         # Calculate Frame Physics
         self.velocity[1] -= (self.g - self.drag)
 
-        self.position[1] += self.velocity[1]/self.fps
-        self.position[0] += self.velocity[0]/self.fps
+        self.position[1] += self.velocity[1]*self.deltaTime
+        self.position[0] += self.velocity[0]*self.deltaTime
         self.position[1] = math.floor(self.position[1])
+
+        # Check for mouse grab
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x -= 250
+        mouse_y = 500-mouse_y
+
+        if (self.grabbing and pygame.mouse.get_pressed()[0]):
+            self.grabbing = True
+        elif (pygame.mouse.get_pressed()[0]):
+            self.grabbing = pygame.mouse.get_pressed()[0] and (mouse_x > self.position[0] - self.scale/2 and mouse_x < self.position[0] + self.scale/2) and (mouse_y > self.position[1] - self.scale/2 and mouse_y < self.position[1] + self.scale/2)
+        else:
+            self.grabbing = False
+        
+        if (other_grabbed):
+            self.grabbing = False
+
+        self.grabbing = self.grabbing and self.can_pick_up
+
+        if (self.grabbing):
+            self.position = [mouse_x, mouse_y]
+            self.velocity = [0, 0]
+            pygame.mouse.set_visible(False)
+        else:
+            pygame.mouse.set_visible(True)
+
+        self.last_frame_grabbing = self.grabbing
+        self.last_frame_pos = self.position
         
         # Check for collision with other objects
         for object in collision_objects:
@@ -89,10 +123,14 @@ class object():
             self.position[1] = 0+(self.scale/2)
             self.velocity[0] = self.velocity[0] - self.velocity[0] * self.roughness
             self.velocity[1] = -self.velocity[1] * self.elasticity
+            self.position[1] += self.velocity[1]*self.deltaTime
+            self.position[0] += self.velocity[0]*self.deltaTime
         elif self.position[1] >= 500 - self.scale/2: # Y axis top boundary
             self.position[1] = 500-(self.scale/2)
             self.velocity[0] = self.velocity[0] - self.velocity[0] * self.roughness
             self.velocity[1] = -self.velocity[1] * self.elasticity
+            self.position[1] += self.velocity[1]*self.deltaTime
+            self.position[0] += self.velocity[0]*self.deltaTime
             
 
         if self.position[0] >= 250 - self.scale/2: # X axis right boundary
@@ -111,3 +149,21 @@ class object():
             pygame.draw.polygon(self.window, (0, 0, 0), ((250+self.position[0]-self.scale/2, 500-self.position[1]+self.scale/2), (250+self.position[0]-1, 500-(self.position[1]+self.scale/2)), (250+(self.scale/2)+self.position[0], 500-self.position[1]+self.scale/2)))
 
         self.elapsed_frames += 1
+
+class rotSquare:
+    def __init__(self, dpf=0.1, scale=100, window=None):
+        self.dpf = dpf  # degrees per frame
+        self.scale = scale
+        self.angles = [0, 90, 180, 270]
+        self.window = window
+        self.points = [(), (), (), ()]
+
+    def frame(self):
+        for x in range(len(self.points)):
+            dist = self.scale / 2
+            self.angles[x] += self.dpf
+            self.points[x] = (250 + math.sin(math.radians(self.angles[x])) * dist,
+                               250 + math.cos(math.radians(self.angles[x])) * dist)
+            self.angles[x] += self.dpf
+        pygame.draw.polygon(self.window, (self.angles[2]//255, self.angles[1]//255, self.angles[0]//255), self.points)
+
