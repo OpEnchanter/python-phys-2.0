@@ -61,7 +61,6 @@ class object():
 
         self.last_frame_pos = start_position
         self.last_frame_grabbing = False
-        
 
     def frame(self, show_fps = bool, collision_objects = list, other_grabbed = bool):
         self.frametiming += 1
@@ -94,6 +93,12 @@ class object():
             self.position = [mouse_x, mouse_y]
             self.velocity = [0, 0]
             pygame.mouse.set_visible(False)
+        elif (self.last_frame_grabbing):
+            self.position = [mouse_x, mouse_y]
+            x_vel = (mouse_x - self.last_frame_pos[0])*30
+            y_vel = (mouse_y - self.last_frame_pos[1])*30
+            self.velocity = [x_vel, y_vel]
+            pygame.mouse.set_visible(True)
         else:
             pygame.mouse.set_visible(True)
 

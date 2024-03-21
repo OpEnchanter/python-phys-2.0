@@ -13,7 +13,7 @@ def spawn(object_amm, offset, scale, starting_pos, starting_vel, type, density, 
     for x in range(object_amm):
         objects.append(physics.object([starting_pos[0]+(scale/2)+(offset*x)+(scale*x), starting_pos[1]], starting_vel,  type, scale, window, density, elasticity, roughness, deltaTime, draggable))
 
-spawn(5, -5, 25, [-250, 350], [0, 0], "square", 1, 0.57, 0.1, True)
+spawn(5, 5, 25, [-250, 350], [0, 0], "square", 1, 0.57, 0.1, True)
 
 
 
