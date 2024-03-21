@@ -89,6 +89,7 @@ class object():
 
         self.grabbing = self.grabbing and self.can_pick_up
 
+
         if (self.grabbing):
             self.position = [mouse_x, mouse_y]
             self.velocity = [0, 0]
@@ -155,7 +156,7 @@ class object():
 
         self.elapsed_frames += 1
 
-class rotSquare:
+class rot_square:
     def __init__(self, dpf=0.1, scale=100, window=None):
         self.dpf = dpf  # degrees per frame
         self.scale = scale

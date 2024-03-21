@@ -59,3 +59,8 @@ while running:
 
 pygame.quit()
 ```
+
+# Experimental features
+
+### Rotating Objects
+The ``rot_square()`` function draws a rotating square to the center of the screen, this is a test for created rotating objects, and does not have any collisions implemented but can be used for purely visual applications that don't require physics.
