@@ -61,6 +61,7 @@ class object():
 
         self.last_frame_pos = start_position
         self.last_frame_grabbing = False
+        self.idx = 0
 
     def frame(self, show_fps = bool, collision_objects = list, other_grabbed = bool):
         self.frametiming += 1
@@ -104,7 +105,10 @@ class object():
             pygame.mouse.set_visible(True)
 
         self.last_frame_grabbing = self.grabbing
-        self.last_frame_pos = self.position
+        if (self.idx >= 3):
+            self.last_frame_pos = self.position
+            self.idx = 0
+        self.idx += 1
         
         # Check for collision with other objects
         for object in collision_objects:
